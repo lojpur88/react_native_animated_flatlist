@@ -7,7 +7,7 @@ import { ITEM_SIZE, EMPTY_ITEM_SIZE, height } from '../constants';
 import ListItem from '../components/ListItem';
 import { useIsFocused } from '@react-navigation/native';
 
-export default function Home({ navigation }) {
+const Home = ({ navigation }) => {
   const [movies, setMovies] = useState(false);
   const isFocused = useIsFocused();
 
@@ -101,7 +101,9 @@ export default function Home({ navigation }) {
       />
     </View>
   );
-}
+};
+
+export default Home;
 
 const styles = StyleSheet.create({
   container: {

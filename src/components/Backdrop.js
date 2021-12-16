@@ -42,6 +42,8 @@ const Backdrop = ({ movies, scrollX }) => {
   );
 };
 
+export default Backdrop;
+
 const styles = StyleSheet.create({
   container: {
     height: BACKDROP_HEIGHT,
@@ -61,5 +63,3 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
 });
-
-export default Backdrop;

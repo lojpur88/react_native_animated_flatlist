@@ -7,6 +7,8 @@ const Loading = () => (
   </View>
 );
 
+export default Loading;
+
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
@@ -14,5 +16,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-
-export default Loading;

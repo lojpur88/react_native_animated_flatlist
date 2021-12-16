@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   StyleSheet,
   View,
@@ -6,17 +6,54 @@ import {
   ImageBackground,
   ScrollView,
   TouchableOpacity,
+  Animated,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { height, width } from '../constants';
 import { AntDesign } from '@expo/vector-icons';
+import GenreItem from '../components/GenreItem';
+import Rating from '../components/Rating';
 
 const SingleMovie = ({ route, navigation }) => {
   const { item } = route.params;
 
-  const filledStars = Math.floor(item.rating / 2);
-  const maxStars = Array(5 - filledStars).fill('staro');
-  const r = [...Array(filledStars).fill('star'), ...maxStars];
+  const slideRight = useRef(new Animated.Value(-width)).current;
+  const slideLeft = useRef(new Animated.Value(width)).current;
+  const scaleUp = useRef(new Animated.Value(0)).current;
+
+  const slideRightAnimation = () => {
+    Animated.timing(slideRight, {
+      toValue: 0,
+      delay: 100,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(({ finished }) => {
+      finished && slideLeftAnimation();
+    });
+  };
+
+  const slideLeftAnimation = () => {
+    Animated.timing(slideLeft, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(({ finished }) => {
+      finished && scaleUpAnimation();
+    });
+  };
+
+  const scaleUpAnimation = () => {
+    Animated.spring(scaleUp, {
+      toValue: 1,
+      tension: 100,
+      friction: 7,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  useEffect(() => {
+    slideRightAnimation();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -37,46 +74,51 @@ const SingleMovie = ({ route, navigation }) => {
             />
             <Text style={{ color: '#fff' }}>Back</Text>
           </TouchableOpacity>
-          <View style={styles.titleWrapper}>
+          <Animated.View
+            style={[
+              styles.titleWrapper,
+              { transform: [{ translateX: slideRight }] },
+            ]}
+          >
             <Text style={styles.title}>{item.title}</Text>
-          </View>
-          <View style={styles.ratingWrapper}>
-            <Text
-              style={{ color: '#fff', paddingRight: 5, fontWeight: 'bold' }}
-            >
-              {item.rating}
-            </Text>
-            {r.map((type, index) => {
-              return (
-                <AntDesign key={index} name={type} size={12} color='yellow' />
-              );
-            })}
-          </View>
+          </Animated.View>
+          <Animated.View
+            style={[
+              styles.ratingWrapper,
+              { transform: [{ translateX: slideLeft }] },
+            ]}
+          >
+            <Rating
+              rating={item.rating}
+              starColor='yellow'
+              numberColor='#fff'
+            />
+          </Animated.View>
           <View style={styles.genresWrapper}>
-            {item.genres.map((genre, index) => {
+            {item.genres.map((genre, i) => {
               return (
-                <View key={index} style={styles.genreItem}>
-                  <Text
-                    style={{
-                      color: '#fff',
-                      textAlign: 'center',
-                    }}
-                  >
-                    {genre}
-                  </Text>
-                </View>
+                <GenreItem key={i} genre={genre} genreDelay={(i + 1) * 300} />
               );
             })}
           </View>
-          <View style={styles.descriptionWrapper}>
+          <Animated.View
+            style={[
+              styles.descriptionWrapper,
+              { transform: [{ scale: scaleUp }] },
+            ]}
+          >
             <ScrollView
               contentContainerStyle={{
                 paddingBottom: 50,
               }}
             >
-              <Text style={styles.descriptionText}>{item.description}</Text>
+              <Text style={styles.descriptionText}>
+                {item.description !== ''
+                  ? item.description
+                  : 'No description for this movie!'}
+              </Text>
             </ScrollView>
-          </View>
+          </Animated.View>
         </LinearGradient>
       </ImageBackground>
     </View>
@@ -108,6 +150,7 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 20,
   },
   backdrop: {
     width,
@@ -136,21 +179,13 @@ const styles = StyleSheet.create({
     padding: 10,
     flexWrap: 'wrap',
   },
-  genreItem: {
-    backgroundColor: 'rgba(0,0,0,0.2)',
-    paddingVertical: 5,
-    paddingHorizontal: 20,
-    borderWidth: 1,
-    borderColor: '#fff',
-    borderRadius: 20,
-    margin: 5,
-  },
   descriptionWrapper: {
     backgroundColor: 'rgba(0,0,0,0.6)',
     borderRadius: 10,
     padding: 20,
     margin: 20,
     height: height * 0.5,
+    width: '100%',
   },
   descriptionText: {
     color: '#fff',

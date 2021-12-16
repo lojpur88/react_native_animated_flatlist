@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   StyleSheet,
   Text,
@@ -22,7 +23,7 @@ const ListItem = ({ item, translateY, pressHandler }) => {
         <Text style={{ fontSize: 24, textAlign: 'center' }} numberOfLines={1}>
           {item.title}
         </Text>
-        <Rating rating={item.rating} />
+        <Rating rating={item.rating} color='tomato' />
         <Genres genres={item.genres} />
         <Text style={{ fontSize: 12 }} numberOfLines={3}>
           {item.description}
@@ -31,6 +32,14 @@ const ListItem = ({ item, translateY, pressHandler }) => {
     </TouchableOpacity>
   );
 };
+
+ListItem.propTypes = {
+  item: PropTypes.object.isRequired,
+  translateY: PropTypes.object.isRequired,
+  pressHandler: PropTypes.func.isRequired,
+};
+
+export default ListItem;
 
 const styles = StyleSheet.create({
   posterImage: {
@@ -58,5 +67,3 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
 });
-
-export default ListItem;
