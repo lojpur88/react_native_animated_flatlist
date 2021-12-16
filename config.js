@@ -1,1 +1,1 @@
-export const API_KEY = 'YOUR_TMDB_API_KEY_HERE';
+export const API_KEY = '197d128bd2125121154be678d4c42364';
