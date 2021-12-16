@@ -23,7 +23,7 @@ export default function Home({ navigation }) {
     }).start();
   };
 
-  const pressHandler = () => {
+  const pressHandler = item => {
     Animated.timing(slideAnim, {
       toValue: height,
       delay: 0,
@@ -32,7 +32,7 @@ export default function Home({ navigation }) {
     }).start(({ finished }) => {
       if (finished) {
         slideAnim.setValue(height);
-        navigation.navigate('Single Movie');
+        navigation.navigate('Single Movie', { item });
       }
     });
   };
@@ -92,7 +92,7 @@ export default function Home({ navigation }) {
 
           return (
             <ListItem
-              pressHandler={pressHandler}
+              pressHandler={() => pressHandler(item)}
               item={item}
               translateY={translateY}
             />
